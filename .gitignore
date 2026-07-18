@@ -1,0 +1,11 @@
+# Machine-local agent settings
+.claude/
+
+# Credentials and local environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets/
