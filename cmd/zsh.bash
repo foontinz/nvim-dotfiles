@@ -56,9 +56,21 @@ export PATH="$HOME/.amp/bin:$PATH"
 export TERMINAL="ghostty"
 alias claude="claude --allow-dangerously-skip-permissions"
 alias cc="claude"
+alias codex="codex --dangerously-bypass-approvals-and-sandbox"
 
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
 export PATH="$HOME/dev/llama.cpp/build/bin:$PATH"
+export PATH="$PATH:$(go env GOPATH)/bin"
+
+# bun completions
+[ -s "/Users/barbos/.bun/_bun" ] && source "/Users/barbos/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# kimi-code
+export PATH="/Users/barbos/.kimi-code/bin:$PATH"
