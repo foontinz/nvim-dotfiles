@@ -1,0 +1,113 @@
+#!/bin/bash
+# Guard catastrophic recursive rm invocations before delegating to macOS /bin/rm.
+set -u
+
+SYSTEM_RM="/bin/rm"
+
+account="$(/usr/bin/id -un)"
+real_home="$(/usr/bin/dscl . -read "/Users/$account" NFSHomeDirectory 2>/dev/null | /usr/bin/awk 'NR == 1 { print $2 }')"
+
+case "$real_home" in
+  /*) ;;
+  *)
+    echo "safe-rm: cannot determine the account home; refusing deletion" >&2
+    exit 70
+    ;;
+esac
+
+recursive=0
+end_options=0
+operands=()
+
+for arg in "$@"; do
+  if (( end_options )); then
+    operands+=("$arg")
+    continue
+  fi
+
+  case "$arg" in
+    --)
+      end_options=1
+      ;;
+    --recursive)
+      recursive=1
+      ;;
+    --*)
+      ;;
+    -*)
+      flags="${arg#-}"
+      case "$flags" in
+        *r*|*R*) recursive=1 ;;
+      esac
+      ;;
+    *)
+      operands+=("$arg")
+      ;;
+  esac
+done
+
+# Resolve the final argv rather than trusting $HOME, which may itself be corrupted.
+# Exit 64 means the request was recognized but rejected by the safety policy.
+if (( ${#operands[@]} > 0 )); then
+  /usr/bin/python3 - "$real_home" "$PWD" "$recursive" "${operands[@]}" <<'PY'
+import os
+import sys
+
+home = os.path.realpath(sys.argv[1])
+cwd = os.path.realpath(sys.argv[2])
+recursive = sys.argv[3] == "1"
+operands = sys.argv[4:]
+
+protected = {
+    "/",
+    "/Applications",
+    "/Library",
+    "/System",
+    "/Users",
+    "/Volumes",
+    "/bin",
+    "/etc",
+    "/opt",
+    "/private",
+    "/sbin",
+    "/tmp",
+    "/usr",
+    "/var",
+    home,
+    os.path.dirname(home),
+}
+
+resolved = []
+for operand in operands:
+    path = operand if os.path.isabs(operand) else os.path.join(cwd, operand)
+    resolved.append(os.path.realpath(path))
+
+for path in resolved:
+    if path in protected:
+        print(f"safe-rm: REFUSED deletion of protected path: {path}", file=sys.stderr)
+        raise SystemExit(64)
+
+# Catch shell-expanded home wipes such as: rm -rf "$HOME"/*
+if recursive:
+    direct_home_children = {
+        path for path in resolved if os.path.dirname(path) == home
+    }
+    if len(direct_home_children) >= 2:
+        print(
+            "safe-rm: REFUSED recursive deletion of multiple top-level home entries",
+            file=sys.stderr,
+        )
+        raise SystemExit(64)
+PY
+  guard_status=$?
+  if (( guard_status != 0 )); then
+    exit "$guard_status"
+  fi
+fi
+
+if [[ "${SAFE_RM_DRY_RUN:-0}" == "1" ]]; then
+  echo "safe-rm: allowed (dry run; /bin/rm was not executed)" >&2
+  exit 0
+fi
+
+exec "$SYSTEM_RM" "$@"
