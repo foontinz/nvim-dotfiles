@@ -17,9 +17,6 @@ bash "$INSTALLERS/rust.bash"
 echo "==> zsh + oh-my-zsh"
 bash "$INSTALLERS/zsh.bash"
 
-echo "==> safe rm guard"
-bash "$INSTALLERS/safe-rm.bash"
-
 echo "==> tooling (uv, fzf)"
 bash "$INSTALLERS/tooling.bash"
 
