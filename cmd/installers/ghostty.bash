@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 ROOT_PATH="$HOME/dev/personal/dotfiles"
 GHOSTTY_CONFIG_PATH="$HOME/Library/Application Support/com.mitchellh.ghostty"

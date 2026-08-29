@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 ROOT_PATH="$HOME/dev/personal/dotfiles"
 HELIX_PATH="$HOME/dev/nightly/helix"

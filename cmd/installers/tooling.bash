@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh

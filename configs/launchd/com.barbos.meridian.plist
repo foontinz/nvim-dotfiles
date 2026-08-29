@@ -9,7 +9,7 @@
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>source "$HOME/.nvm/nvm.sh" &amp;&amp; exec meridian</string>
+        <string>export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"; exec meridian</string>
     </array>
 
     <key>EnvironmentVariables</key>
