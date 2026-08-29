@@ -20,8 +20,6 @@ fi
 . "$HOME/.cargo/env"
 export PATH=~/.local/bin/:$PATH
 
-#export PATH="$HOME/Library/Java/JavaVirtualMachines/azul-17.0.14-intel/Contents/Home:$PATH"
-#export JAVA_HOME="$HOME/Library/Java/JavaVirtualMachines/azul-17.0.14-intel/Contents/Home"
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
@@ -47,8 +45,6 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# Amp CLI
-export PATH="$HOME/.amp/bin:$PATH"
 
 export TERMINAL="ghostty"
 alias claude="claude --allow-dangerously-skip-permissions"
@@ -58,16 +54,8 @@ alias codex="codex --dangerously-bypass-approvals-and-sandbox"
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-
 export PATH="$HOME/dev/llama.cpp/build/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 # kimi-code
 export PATH="$HOME/.kimi-code/bin:$PATH"

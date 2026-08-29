@@ -62,6 +62,9 @@ bash "$INSTALLERS/git.bash"
 echo "==> rust"
 bash "$INSTALLERS/rust.bash"
 
+echo "==> Go"
+bash "$INSTALLERS/go.bash"
+
 echo "==> zsh + oh-my-zsh"
 bash "$INSTALLERS/zsh.bash"
 
