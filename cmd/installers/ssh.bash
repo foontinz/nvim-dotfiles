@@ -1,14 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_PATH="$HOME/dev/personal/dotfiles"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # create ssh directory if needed
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
 
 # copy config
-cp "$ROOT_PATH/configs/ssh/config" "$HOME/.ssh/config"
+cp "$REPO_ROOT/configs/ssh/config" "$HOME/.ssh/config"
 
 # generate key if not present
 if [ ! -f "$HOME/.ssh/id_ed25519" ]; then

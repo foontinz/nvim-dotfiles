@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_PATH="$HOME/dev/personal/dotfiles"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # install tb CLI
 brew tap touchbistro/tap
@@ -12,4 +12,4 @@ tb registry add TouchBistro/tb-registry-example
 tb registry add foontinz/touch-bistro-registry
 
 # copy config
-cp "$ROOT_PATH/configs/tb/tbrc.yml" "$HOME/.tbrc.yml"
+cp "$REPO_ROOT/configs/tb/tbrc.yml" "$HOME/.tbrc.yml"

@@ -1,20 +1,61 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_PATH="$HOME/dev/personal/dotfiles"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+HELIX_VERSION="25.07.1"
 HELIX_PATH="$HOME/dev/nightly/helix"
-CONFIG_PATH="$HOME/.config"
-HELIX_CONFIG_PATH="$CONFIG_PATH/helix"
+HELIX_CONFIG_PATH="$HOME/.config/helix"
+BACKUP_ROOT="$HOME/dev/nightly/helix-backups/$(date +%Y%m%d-%H%M%S)-$$"
+STAGING_PATH=""
 
-# uninstall helix 
-sudo rm -rf "$HELIX_PATH"
-sudo rm -rf "$HELIX_CONFIG_PATH"
+if [[ -f "$HOME/.cargo/env" ]]; then
+    . "$HOME/.cargo/env"
+fi
 
-# install helix
-git clone https://github.com/helix-editor/helix "$HELIX_PATH"
-cd "$HELIX_PATH"
-cargo install --path helix-term --locked
+command -v cargo >/dev/null 2>&1 || {
+    echo "cargo is required to build Helix" >&2
+    exit 1
+}
 
-# move config
-cp -r "$ROOT_PATH/configs/helix" "$CONFIG_PATH" 
-ln -sf "$HELIX_PATH/runtime" "$HELIX_CONFIG_PATH/runtime"
+mkdir -p "$HOME/dev/nightly" "$HOME/.config"
+STAGING_PATH="$(mktemp -d "$HOME/dev/nightly/.helix-build.XXXXXX")"
+
+cleanup() {
+    if [[ -n "$STAGING_PATH" && -d "$STAGING_PATH" ]]; then
+        rm -rf "$STAGING_PATH"
+    fi
+}
+trap cleanup EXIT
+
+# Build the pinned release before replacing any existing installation.
+git clone --branch "$HELIX_VERSION" --depth 1 \
+    https://github.com/helix-editor/helix "$STAGING_PATH"
+(
+    cd "$STAGING_PATH"
+    cargo install --path helix-term --locked
+)
+
+mkdir -p "$BACKUP_ROOT"
+if [[ -e "$HELIX_PATH" ]]; then
+    mv "$HELIX_PATH" "$BACKUP_ROOT/source"
+fi
+mv "$STAGING_PATH" "$HELIX_PATH"
+STAGING_PATH=""
+
+# Preserve the previous configuration before installing the tracked files.
+if [[ -e "$HELIX_CONFIG_PATH" ]]; then
+    cp -R "$HELIX_CONFIG_PATH" "$BACKUP_ROOT/config"
+fi
+mkdir -p "$HELIX_CONFIG_PATH"
+cp -R "$REPO_ROOT/configs/helix/." "$HELIX_CONFIG_PATH/"
+
+RUNTIME_PATH="$HELIX_CONFIG_PATH/runtime"
+if [[ -L "$RUNTIME_PATH" ]]; then
+    rm -f "$RUNTIME_PATH"
+elif [[ -e "$RUNTIME_PATH" ]]; then
+    mv "$RUNTIME_PATH" "$BACKUP_ROOT/runtime"
+fi
+ln -s "$HELIX_PATH/runtime" "$RUNTIME_PATH"
+
+printf 'Helix %s installed; previous files backed up under %s\n' \
+    "$HELIX_VERSION" "$BACKUP_ROOT"

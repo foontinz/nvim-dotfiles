@@ -15,12 +15,15 @@ mkdir -p "$HOME/.local/bin" "$HOME/Library/LaunchAgents" "$HOME/Library/Logs"
 cp "$SCRIPT_SRC" "$SCRIPT_DST"
 chmod 755 "$SCRIPT_DST"
 
-python3 - <<'PY'
+python3 - "$PLIST_SRC" "$PLIST_DST" "$SCRIPT_DST" "$HOME" <<'PY'
 from pathlib import Path
-repo = Path.home() / 'dev/personal/dotfiles'
-plist = (repo / 'configs/launchd/com.barbos.google-workspace-mcp.plist').read_text()
-plist = plist.replace('/Users/barbos/dev/personal/dotfiles/cmd/launchd/google-workspace-mcp.bash', str(Path.home() / '.local/bin/google-workspace-mcp-launchd'))
-(Path.home() / 'Library/LaunchAgents/com.barbos.google-workspace-mcp.plist').write_text(plist)
+import sys
+
+source, destination, script, home = map(Path, sys.argv[1:])
+plist = source.read_text()
+plist = plist.replace('__GOOGLE_WORKSPACE_MCP_SCRIPT__', str(script))
+plist = plist.replace('__HOME__', str(home))
+destination.write_text(plist)
 PY
 chmod 644 "$PLIST_DST"
 

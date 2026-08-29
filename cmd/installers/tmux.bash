@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_PATH="$HOME/dev/personal/dotfiles"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # install tmux
 brew install tmux
@@ -10,4 +10,4 @@ brew install tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # copy config
-cp "$ROOT_PATH/configs/tmux/tmux.conf" "$HOME/.tmux.conf"
+cp "$REPO_ROOT/configs/tmux/tmux.conf" "$HOME/.tmux.conf"

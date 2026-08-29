@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/barbos/dev/personal/dotfiles/cmd/launchd/google-workspace-mcp.bash</string>
+        <string>__GOOGLE_WORKSPACE_MCP_SCRIPT__</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -18,8 +18,8 @@
     <string>Background</string>
 
     <key>StandardOutPath</key>
-    <string>/Users/barbos/Library/Logs/google-workspace-mcp.out.log</string>
+    <string>__HOME__/Library/Logs/google-workspace-mcp.out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/barbos/Library/Logs/google-workspace-mcp.err.log</string>
+    <string>__HOME__/Library/Logs/google-workspace-mcp.err.log</string>
 </dict>
 </plist>

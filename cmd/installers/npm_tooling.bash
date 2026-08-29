@@ -13,4 +13,3 @@ command -v npm >/dev/null 2>&1 || {
 npm upgrade -g && npm update -g
 npm install -g pyright
 npm install -g prettier
-npm install -g @rynfar/meridian

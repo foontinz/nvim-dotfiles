@@ -63,11 +63,11 @@ export PATH="$HOME/dev/llama.cpp/build/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
 # bun completions
-[ -s "/Users/barbos/.bun/_bun" ] && source "/Users/barbos/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # kimi-code
-export PATH="/Users/barbos/.kimi-code/bin:$PATH"
+export PATH="$HOME/.kimi-code/bin:$PATH"
